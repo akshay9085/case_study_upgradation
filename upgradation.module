@@ -1,0 +1,579 @@
+<?php
+  require_once 'general_deletion.inc';
+
+
+function upgradation_menu()
+{
+    $items = array();
+    /* PROPOSAL */
+    $items['case-study-upgradation/proposal'] = array(
+        'title' => 'Upgradation Proposal Form',
+        'description' => 'Case Study Upgradation Proposal Form',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array(
+            'csu_proposal_form',
+        ),
+        'access arguments' => array(
+            'Up create proposal',
+        ),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'proposal.inc',
+    );
+    $items['case-study-upgradation/abstract-approval/bulk'] = array(
+        'title' => 'CS Manage Code',
+        'description' => 'Bulk Mangage',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array(
+            'upgradation_abstract_bulk_approval_form',
+        ),
+        'access arguments' => array(
+            'Upgradation download code',
+        ),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 2,
+        'file' => 'abstract_bulk_approval.inc',
+    );
+     /* COMPLETED  Case studies */
+     $items['case-study-upgradation/completed-case-studies'] = array(
+        'title' => 'Completed Case studies',
+        'page callback' => 'upgradation_completed_proposals_all',
+        'access arguments' => array(
+            'upgradation download code',
+        ),
+        'file' => 'upgradation_details.inc',
+    );
+    /* LABS IN PROGRESS */
+    $items['case-study-upgradation/case-study-progress'] = array(
+        'title' => 'Case studies in Progress',
+        'page callback' => 'upgradation_progress_all',
+        'access arguments' => array(
+            'Case Study download code',
+        ),
+        'file' => 'upgradation_details.inc',
+    );
+     /* CODE DOWNLOADS */
+     $items['case-study-upgradation/full-download/project'] = array(
+        'title' => 'Code Download',
+        'description' => 'Code Download',
+        'page callback' => 'upgradation_download_full_project',
+        'access arguments' => array(
+            'Upgradation download code',
+        ),
+        'type' => MENU_CALLBACK,
+        'file' => 'full_download.inc',
+    );
+    $items['case-study-upgradation/manage-proposal'] = array(
+        'title' => 'Manage Case Study Proposals',
+        'description' => 'Manage Case Study Proposals',
+        'page callback' => 'upgradation_proposal_all',
+        'access callback' => 'user_access',
+        'access arguments' => array(
+            'upgradation manage proposal',
+        ),
+        'file' => 'manage_proposal.inc',
+    );
+    // $items['case-study-upgradation/manage-proposal/pending'] = array(
+    //     'title' => 'Pending Proposals',
+    //     'description' => 'Pending Case Study Proposals Queue',
+    //     'page callback' => 'upgradation_proposal_pending',
+    //     'access callback' => 'user_access',
+    //     'access arguments' => array(
+    //         'upgradation manage proposal',
+    //     ),
+    //     'type' => MENU_DEFAULT_LOCAL_TASK,
+    //     'weight' => 1,
+    //     'file' => 'manage_proposal.inc',
+    // );
+    $items['case-study-upgradation/manage-proposal/all'] = array(
+        'title' => 'All Proposals',
+        'description' => 'All Proposals',
+        'page callback' => 'upgradation_proposal_all',
+        'access callback' => 'user_access',
+        'access arguments' => array(
+            'upgradation manage proposal',
+        ),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 4,
+        'file' => 'manage_proposal.inc',
+    );
+    $items['case-study-upgradation/manage-proposal/edit-upload-file'] = array(
+        'title' => 'Edit code files',
+        'description' => 'Edit code files',
+        'page callback' => 'upgradation_proposal_edit_file_all',
+        'access callback' => 'user_access',
+        'access arguments' => array(
+            'upgradation manage proposal',
+        ),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 4,
+        'file' => 'manage_proposal.inc',
+    );
+    $items['case-study-upgradation/manage-proposal/approve'] = array(
+        'title' => 'Approve Proposal',
+        'description' => 'Approve Proposal',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array(
+            'cfd_case_study_proposal_approval_form',
+        ),
+        'access arguments' => array(
+            'upgradation manage proposal',
+        ),
+        'type' => MENU_CALLBACK,
+        'file' => 'manage_proposal.inc',
+    );
+    $items['case-study-upgradation/manage-proposal/edit'] = array(
+        'title' => 'Edit Proposal',
+        'description' => 'Edit Proposal',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array(
+            'upgradation_proposal_edit_form',
+        ),
+        'access arguments' => array(
+            'upgradation manage proposal',
+        ),
+        'type' => MENU_CALLBACK,
+        'file' => 'manage_proposal.inc',
+    );
+    $items['case-study-upgradation/manage-proposal/status'] = array(
+        'title' => 'Proposal Status',
+        'description' => 'Proposal Status',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array(
+            'upgradation_proposal_status_form',
+        ),
+        'access arguments' => array(
+            'Case Study approve proposal',
+        ),
+        'type' => MENU_CALLBACK,
+        'file' => 'manage_proposal.inc',
+    );
+    
+     /* CODE UPLOAD */
+     $items['case-study-upgradation/abstract-code/edit-upload-files'] = array(
+        'title' => 'Case Study Project Directory edit uploaded files for proposal',
+        'description' => 'Project Edit Upload',
+        'page callback' => 'drupal_get_form',
+        'access callback' => 'user_access',
+        'page arguments' => array(
+            'upgradation_edit_upload_abstract_code_form',
+        ),
+        'access arguments' => array(
+            'Case Study Upgradation upload abstract',
+        ),
+        'type' => MENU_CALLBACK,
+        'file' => 'upload_code.inc',
+        'weight' => 2,
+    );
+    $items['case-study-upgradation/abstract-code'] = array(
+        'title' => 'Case Study Upgradation Directory Submission',
+        'description' => 'Abstract Submission',
+        'page callback' => 'upgradation_abstract',
+        'access callback' => 'user_access',
+        'access arguments' => array(
+            'Case Study Upgradation upload abstract',
+        ),
+        'file' => 'upload_code.inc',
+    );
+    $items['case-study-upgradation/abstract-code/upload'] = array(
+        'title' => 'Case Study Upgradation Directory Submission',
+        'description' => 'Project Upload',
+        'page callback' => 'drupal_get_form',
+        'access callback' => 'user_access',
+        'page arguments' => array(
+            'upgradation_upload_abstract_code_form',
+        ),
+        'access arguments' => array(
+            'Case Study Upgradation upload abstract',
+        ),
+        'type' => MENU_LOCAL_TASK,
+        'file' => 'upload_code.inc',
+        'weight' => 2,
+    );
+    $items['case-study-upgradation/abstract-code/delete'] = array(
+        'title' => 'Delete Solution',
+        'description' => 'Delete Solution',
+        'page callback' => 'upgradation_upload_code_delete',
+        'access arguments' => array(
+            'Case Study upload code',
+        ),
+        'type' => MENU_CALLBACK,
+        'file' => 'upload_code_delete.inc',
+    );
+    //admin settings for mail and extensions
+    $items['admin/settings/upgradation'] = array(
+        'title' => 'Upgradation Settings',
+        'description' => 'Upgradation Settings',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array(
+            'upgradation_settings_form',
+        ),
+        'access arguments' => array(
+            'administer Upgradation',
+        ),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'settings.inc',
+    );
+    $items['case-study-upgradation/case-study-run'] = array(
+        'title' => 'Download Codes',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array(
+            'upgradation_run_form',
+        ),
+        'access arguments' => array(
+            'Upgradation download code',
+        ),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'run.inc',
+    );
+    return $items;
+}
+
+function upgradation_permission()
+{
+    return array(
+       
+        'Up create proposal' => array(
+            'title' => t('Case Study create proposal'),
+            'restrict access' => true,
+        ),
+        'Case Study Upgradation upload abstract' => array(
+            'title' => t('Case Study upload code'),
+            'restrict access' => true,
+        ),
+        'administer Upgradation' => array(
+            'title' => t('administer Upgradation'),
+            'restrict access' => true,
+        ),
+        'Case Study approve proposal' => array(
+            'title' => t('Case Study approve proposal'),
+            'restrict access' => true,
+        ),
+        'upgradation manage proposal' => array(
+            'title' => t('upgradation manage proposal'),
+            'restrict access' => true,
+        ),
+        'Upgradation download code' => array(
+            'title' => t('Upgradation download code'),
+            'restrict access' => true,
+        ),
+        'Case Study bulk manage abstract' => array(
+            'title' => t('Case Study bulk manage abstract'),
+            'restrict access' => true,
+        ),
+        'Upgradation bulk delete abstract' => array(
+            'title' => t('Upgradation bulk delete abstract'),
+            'restrict access' => true,
+        ),
+    );
+    
+}
+// t.approval_status = 3 and 
+function getversionName($proposal_id){
+    $version_name= db_query("SELECT v.case_study_version FROM csu_proposal t JOIN csu_version v ON t.version_id = v.id 
+    WHERE  t.id = :proposal_id", array(
+        ':proposal_id' => $proposal_id,
+    ))->fetchField();
+    return $version_name;
+}
+
+function CreateReadmeFileUpgradedCaseStudyProject($proposal_id)
+{
+    $result = db_query("
+    SELECT * from csu_proposal WHERE id = :proposal_id", array(
+":proposal_id" => $proposal_id,
+));
+
+$proposal_data = $result->fetchObject();
+   
+    $query = db_select('csu_version', 'v')
+    ->fields('v', array('id', 'case_study_version'));
+    $query->innerJoin('case_study_proposal', 'p', 'p.version_id = v.id');
+    $query->condition('v.id', $proposal_data->version_id);
+    $version_data = $query->execute()->fetchObject();
+    $version = $version_data->case_study_version;
+    $simulation_type = $proposal_data->simulation_type_id;
+  
+    $version1 =  $version . '/';
+    $simulation_type1 = $simulation_type . '/';
+    $proposal_directory = $proposal_data->directory_name;
+    $dest_path_project_files = $proposal_directory . '/';
+    $dest_path = $version1 . $simulation_type1 .  $dest_path_project_files;
+  
+    $root_path = upgradation_path();
+    // var_dump($dest_path);die;
+    $readme_file = fopen($root_path . $dest_path . "README.txt", "w") or die("Unable to open file!");
+    $txt = "";
+    $txt .= "About the Case Study";
+    $txt .= "\n" . "\n";
+    $txt .= "Title Of The Case Study Project: " . $proposal_data->project_title . "\n";
+    // version simulation type solver
+    $txt .= "Contributor Name: " . $proposal_data->name_title . " " . $proposal_data->contributor_name . "\n";
+    $txt .= "University: " . $proposal_data->university . "\n";
+    $txt .= "\n" . "\n";
+
+    $txt .= " Case Study Project By FOSSEE, IIT Bombay" . "\n";
+    fwrite($readme_file, $txt);
+    fclose($readme_file);
+    return $txt;
+    
+}
+
+function upgradation_path()
+{
+    return $_SERVER['DOCUMENT_ROOT'] . base_path() . 'cfd_uploads/csu_uploads/';
+}
+// function cfd_case_study_file_path($value = '')
+// {
+//     return $_SERVER['DOCUMENT_ROOT'] . base_path() . 'cfd_uploads/';
+// }
+// function cfd_case_study_project_titles_resource_file_path()
+// {
+//     return $_SERVER['DOCUMENT_ROOT'] . base_path() . 'cfd_uploads/case_project_titles_resource_files/';
+// }
+function upgradation_check_valid_filename($file_name)
+{
+    if (!preg_match('/^[0-9a-zA-Z\.\_]+$/', $file_name)) {
+        return false;
+    } else if (substr_count($file_name, ".") > 1) {
+        return false;
+    } else {
+        return true;
+    }
+
+}
+function _csu_list_of_versions(){
+    $versions = array();
+    $query = db_select('csu_version');
+    $query->fields('csu_version');
+    $version_list = $query->execute();
+    while($version_data = $version_list->fetchObject()){
+        $versions[$version_data->id] = $version_data->case_study_version;
+    }
+    
+    return $versions;
+}
+
+function _csu_list_of_case_studies($selected_version = NULL)
+{
+    $existing_case_studies = array();
+    $result = db_query("SELECT * from case_study_proposal WHERE project_title NOT IN( SELECT project_title from csu_proposal where approval_status = 3)" );
+    //var_dump($result);die;
+    while ($case_study_list_data = $result->fetchObject()) {
+        $existing_case_studies[$case_study_list_data->project_title] = $case_study_list_data->project_title;
+    }
+    return $existing_case_studies;
+}
+function _csu_list_of_solvers($version_id){
+    // $simulation_id = $simulation_id;
+    $solvers = array();
+    $query = db_select('csu_solvers');
+    $query->fields('csu_solvers');
+    $query->condition('version_id',$version_id);
+   
+    $solvers_list = $query->execute();
+    while($solvers_data = $solvers_list->fetchObject()){
+        $solvers[$solvers_data->solver_name] = $solvers_data->solver_name;
+    }
+    // row_count
+    
+    return $solvers;
+}
+
+function _csu_list_of_simulation_types($project_title = NULL){
+    $simulation_types = array();
+    $query = db_select('case_study_simulation_type', 's');
+    $query->fields('s', array('id','simulation_type'));
+    // $query = db_select('case_study_proposal', 's')
+    // ->fields('s', array('id','simulation_type_id'));
+    // $query->condition('s.project_title', $project_title);
+    // if ($project_title != NULL) {
+        // $query->innerJoin('case_study_simulation_type', 'p', 'p.simulation_type_id = s.id');
+
+    // }
+    if ($project_title != NULL) {
+        $query->innerJoin('case_study_proposal', 'p', 'p.simulation_type_id = s.id');
+        $query->condition('p.project_title', $project_title);
+    }
+    $simulation_type_list = $query->execute();
+    while ($simulation_type_data = $simulation_type_list->fetchObject()) {
+        $simulation_types[$simulation_type_data->simulation_type] = $simulation_type_data->simulation_type;
+    }
+    return $simulation_types;
+}
+function _csu_old_list_of_solver($project_title = NULL){
+    $simulation_types = array();
+    $query = db_select('case_study_solvers','s');
+    $query->fields('s', array('id','solver_name'));
+   
+    // $query = db_select('case_study_proposal', 's')
+    // ->fields('s', array('id','simulation_type_id'));
+    // $query->condition('s.project_title', $project_title);
+    // if ($project_title != NULL) {
+        // $query->innerJoin('case_study_simulation_type', 'p', 'p.simulation_type_id = s.id');
+
+    // }
+    if ($project_title != NULL) {
+        $query->innerJoin('case_study_proposal', 'p', 'p.solver_used = s.solver_name');
+        $query->condition('p.project_title', $project_title);
+    }
+    $solvers_list = $query->execute();
+    while($solvers_data = $solvers_list->fetchObject()){
+        $solvers[$solvers_data->solver_name] = $solvers_data->solver_name;
+    }
+    return $solvers;
+}
+// $simulation_id
+
+function upgradation_get_proposal()
+{
+    global $user;
+    $query = db_select('csu_proposal');
+    $query->fields('csu_proposal');
+    $query->condition('uid', $user->uid);
+    $query->orderBy('id', 'DESC');
+    $query->range(0, 1);
+    $proposal_q = $query->execute();
+    $proposal_data = $proposal_q->fetchObject();
+    if (!$proposal_data) {
+        drupal_set_message("You do not have any approved Case Study proposal. Please propose a Case Study", 'error');
+        drupal_goto('');
+    } //!$proposal_data
+    switch ($proposal_data->approval_status) {
+        // case 0:
+        //     drupal_set_message(t('Proposal is awaiting approval.'), 'status');
+        //     return false;
+        case 1:
+            return $proposal_data;
+        case 2:
+            drupal_set_message(t('Proposal has been dis-approved.'), 'error');
+            return false;
+        case 3:
+            drupal_set_message(t('Proposal has been marked as completed.'), 'status');
+            return false;
+        default:
+            drupal_set_message(t('Invalid proposal state. Please contact site administrator for further information.'), 'error');
+            return false;
+    } //$proposal_data->approval_status
+    return false;
+}
+function _csu_dir_name($project, $proposar_name)
+{
+    $project_title = $project;
+    $proposar_name = $proposar_name;
+    $dir_name = $project_title . ' By ' . $proposar_name;
+    $directory_name = str_replace("__", "_", str_replace(" ", "_", str_replace("/", "_", trim($dir_name))));
+    return $directory_name;
+}
+
+//Upload the Report 
+// this document should contain 
+// Upload the Case template
+// Upload the Case solution
+
+// version → simulation type → project_title → upload files
+function CSU_RenameDir($proposal_id, $dir_name)
+{
+    $proposal_id = $proposal_id;
+    $dir_name = $dir_name;
+    $query = db_query("SELECT version_id, simulation_type_id, project_title FROM csu_proposal WHERE id = :proposal_id", array(
+        ':proposal_id' => $proposal_id,
+    ));
+    $result = $query->fetchObject();
+    $query = db_select('csu_version', 'v')
+    ->fields('v', array('id', 'case_study_version'));
+    $query->innerJoin('case_study_proposal', 'p', 'p.version_id = v.id');
+    $query->condition('v.id', $result->version_id);
+    $version_data = $query->execute()->fetchObject();
+    $version = $version_data->case_study_version;
+    $simulation_type = $result->simulation_type_id;
+  
+    $version1 =  $version . '/';
+    $simulation_type1 = $simulation_type . '/';
+    $proposal_directory = $result->directory_name;
+    $dest_path_project_files = $proposal_directory . '/';
+    $dest_path = $version1 . $simulation_type1 .  $dest_path_project_files;
+    if ($result != null) {
+        $files = scandir(upgradation_path());
+        $files_id_dir = upgradation_path() . $result->id;
+        //var_dump($files);die;
+        $file_dir = upgradation_path() . $result->directory_name;
+        if (is_dir($file_dir)) {
+            $new_directory_name = rename(upgradation_path() . $result->directory_name, upgradation_path() . $dir_name);
+            return $new_directory_name;
+        } //is_dir($file_dir)
+        else if (is_dir($files_id_dir)) {
+            $new_directory_name = rename(cfd_case_study_path() . $result->id, cfd_case_study_path() . $dir_name);
+            return $new_directory_name;
+        } //is_dir($files_id_dir)
+        else {
+            drupal_set_message('Directory not available for rename.');
+            return;
+        }
+    } //$result != NULL
+    else {
+        drupal_set_message('Project directory name not present in databse');
+        return;
+    }
+    return;
+}
+
+function csu_rrmdir_project($prop_id)
+{
+    $version_name = getversionName($proposal_id);
+    // var_dump($version_name);die;
+
+    $proposal_id = $prop_id;
+    $result = db_query("SELECT * from case_study_proposal WHERE id = :proposal_id", array(
+        ":proposal_id" => $proposal_id,
+    ));
+    $proposal_data = $result->fetchObject();
+    $root_path = cfd_case_study_document_path();
+    $simulation_tyoe = $proposal_data->simulation_type_id;
+    //version simulation
+    $dir = $root_path . $version_name . $simulation_tyoe . $proposal_data->directory_name;
+    if ($proposal_data->id == $prop_id) {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir . "/" . $object) == "dir") {
+                        rrmdir($dir . "/" . $object);
+                    } //filetype($dir . "/" . $object) == "dir"
+                    else {
+                        unlink($dir . "/" . $object);
+                    }
+                } //$object != "." && $object != ".."
+            } //$objects as $object
+            reset($objects);
+            rmdir($dir);
+            $msg = drupal_set_message("Directory deleted successfully");
+            return $msg;
+        } //is_dir($dir)
+        $msg = drupal_set_message("Directory not present");
+        return $msg;
+    } //$proposal_data->id == $prop_id
+    else {
+        $msg = drupal_set_message("Data not found");
+        return $msg;
+    }
+}
+// function rrmdir($dir)
+// {
+//     if (is_dir($dir)) {
+//         $objects = scandir($dir);
+//         foreach ($objects as $object) {
+//             if ($object != "." && $object != "..") {
+//                 if (filetype($dir . "/" . $object) == "dir") {
+//                     rrmdir($dir . "/" . $object);
+//                 } else {
+//                     unlink($dir . "/" . $object);
+//                 }
+
+//             } //$object != "." && $object != ".."
+//         } //$objects as $object
+//         reset($objects);
+//         rmdir($dir);
+//     } //is_dir($dir)
+// }
+
+
