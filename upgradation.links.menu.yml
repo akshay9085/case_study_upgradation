@@ -1,0 +1,48 @@
+upgradation.settings_form:
+  title: 'Upgradation Settings'
+  description: 'Configure case study upgradation settings'
+  route_name: upgradation.settings_form
+  parent: system.admin_config
+
+upgradation.csu_proposal_form:
+  title: 'Upgradation Proposal Form'
+  description: 'Case Study Upgradation Proposal Form'
+  route_name: upgradation.csu_proposal_form
+
+upgradation.abstract:
+  title: 'Case Study Upgradation Directory Submission'
+  description: 'Abstract submission'
+  route_name: upgradation.abstract
+
+upgradation.upload_abstract_code_form:
+  title: 'Upload files'
+  description: 'Upload proposal files'
+  route_name: upgradation.upload_abstract_code_form
+  parent: upgradation.abstract
+
+upgradation.proposal_all:
+  title: 'Manage Case Study Proposals'
+  description: 'Review and update proposal records'
+  route_name: upgradation.proposal_all
+
+upgradation.proposal_edit_file_all:
+  title: 'Edit code files'
+  description: 'Update uploaded project files'
+  route_name: upgradation.proposal_edit_file_all
+
+upgradation.abstract_bulk_approval_form:
+  title: 'CS Manage Code'
+  description: 'Bulk manage submitted projects'
+  route_name: upgradation.abstract_bulk_approval_form
+
+upgradation.completed_proposals_all:
+  title: 'Completed Case studies'
+  route_name: upgradation.completed_proposals_all
+
+upgradation.progress_all:
+  title: 'Case studies in Progress'
+  route_name: upgradation.progress_all
+
+upgradation.run_form:
+  title: 'Download Codes'
+  route_name: upgradation.run_form

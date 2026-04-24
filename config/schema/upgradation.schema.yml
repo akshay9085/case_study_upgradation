@@ -1,0 +1,22 @@
+upgradation.settings:
+  type: config_object
+  label: 'Case study upgradation settings'
+  mapping:
+    upgraded_case_study_emails:
+      type: string
+      label: 'Bcc notification emails'
+    upgraded_case_study_cc_emails:
+      type: string
+      label: 'Cc notification emails'
+    upgraded_case_study_from_email:
+      type: string
+      label: 'Outgoing from email address'
+    upgradation_abstract_upload_extensions:
+      type: string
+      label: 'Allowed abstract upload extensions'
+    upgraded_case_study_project_files_extensions:
+      type: string
+      label: 'Allowed project file extensions'
+    all_run_extensions:
+      type: string
+      label: 'Allowed all run file extensions'

@@ -1,0 +1,24 @@
+'Up create proposal':
+  title: 'Case Study create proposal'
+  'restrict access': true
+'Case Study Upgradation upload abstract':
+  title: 'Case Study upload code'
+  'restrict access': true
+'administer Upgradation':
+  title: 'administer Upgradation'
+  'restrict access': true
+'Case Study approve proposal':
+  title: 'Case Study approve proposal'
+  'restrict access': true
+'upgradation manage proposal':
+  title: 'upgradation manage proposal'
+  'restrict access': true
+'Upgradation download code':
+  title: 'Upgradation download code'
+  'restrict access': true
+'Case Study bulk manage abstract':
+  title: 'Case Study bulk manage abstract'
+  'restrict access': true
+'Upgradation bulk delete abstract':
+  title: 'Upgradation bulk delete abstract'
+  'restrict access': true

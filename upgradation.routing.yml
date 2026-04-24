@@ -1,0 +1,125 @@
+upgradation.csu_proposal_form:
+  path: /case-study-upgradation/proposal
+  defaults:
+    _title: 'Upgradation Proposal Form'
+    _form: '\Drupal\upgradation\Form\CsuProposalForm'
+  requirements:
+    _permission: 'Up create proposal'
+
+upgradation.abstract_bulk_approval_form:
+  path: /case-study-upgradation/abstract-approval/bulk
+  defaults:
+    _title: 'CS Manage Code'
+    _form: '\Drupal\upgradation\Form\UpgradationAbstractBulkApprovalForm'
+  requirements:
+    _permission: 'Upgradation download code'
+
+upgradation.completed_proposals_all:
+  path: /case-study-upgradation/completed-case-studies
+  defaults:
+    _title: 'Completed Case studies'
+    _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_completed_proposals_all'
+  requirements:
+    _permission: 'Upgradation download code'
+
+upgradation.progress_all:
+  path: /case-study-upgradation/case-study-progress
+  defaults:
+    _title: 'Case studies in Progress'
+    _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_progress_all'
+  requirements:
+    _permission: 'Upgradation download code'
+
+upgradation.download_full_project:
+  path: /case-study-upgradation/full-download/project/{proposal_id}
+  defaults:
+    _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_download_full_project'
+    proposal_id: 0
+  requirements:
+    _permission: 'Upgradation download code'
+    proposal_id: '\d+'
+
+upgradation.proposal_all:
+  path: /case-study-upgradation/manage-proposal
+  defaults:
+    _title: 'All Proposals'
+    _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_proposal_all'
+  requirements:
+    _permission: 'upgradation manage proposal'
+
+upgradation.proposal_all_legacy:
+  path: /case-study-upgradation/manage-proposal/all
+  defaults:
+    _title: 'All Proposals'
+    _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_proposal_all'
+  requirements:
+    _permission: 'upgradation manage proposal'
+
+upgradation.proposal_edit_file_all:
+  path: /case-study-upgradation/manage-proposal/edit-upload-file
+  defaults:
+    _title: 'Edit code files'
+    _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_proposal_edit_file_all'
+  requirements:
+    _permission: 'upgradation manage proposal'
+
+upgradation.proposal_edit_form:
+  path: /case-study-upgradation/manage-proposal/edit/{proposal_id}
+  defaults:
+    _title: 'Edit Proposal'
+    _form: '\Drupal\upgradation\Form\UpgradationProposalEditForm'
+  requirements:
+    _permission: 'upgradation manage proposal'
+    proposal_id: '\d+'
+
+upgradation.proposal_status_form:
+  path: /case-study-upgradation/manage-proposal/status/{proposal_id}
+  defaults:
+    _title: 'Proposal Status'
+    _form: '\Drupal\upgradation\Form\UpgradationProposalStatusForm'
+  requirements:
+    _permission: 'Case Study approve proposal'
+    proposal_id: '\d+'
+
+upgradation.edit_upload_abstract_code_form:
+  path: /case-study-upgradation/abstract-code/edit-upload-files/{proposal_id}
+  defaults:
+    _title: 'Edit uploaded files'
+    _form: '\Drupal\upgradation\Form\UpgradationEditUploadAbstractCodeForm'
+  requirements:
+    _permission: 'upgradation manage proposal'
+    proposal_id: '\d+'
+
+upgradation.abstract:
+  path: /case-study-upgradation/abstract-code
+  defaults:
+    _title: 'Case Study Upgradation Directory Submission'
+    _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_abstract'
+  requirements:
+    _permission: 'Case Study Upgradation upload abstract'
+
+upgradation.upload_abstract_code_form:
+  path: /case-study-upgradation/abstract-code/upload
+  defaults:
+    _title: 'Upload files'
+    _form: '\Drupal\upgradation\Form\UpgradationUploadAbstractCodeForm'
+  requirements:
+    _permission: 'Case Study Upgradation upload abstract'
+
+upgradation.settings_form:
+  path: /admin/config/cfd/upgradation
+  defaults:
+    _title: 'Upgradation Settings'
+    _form: '\Drupal\upgradation\Form\UpgradationSettingsForm'
+  requirements:
+    _permission: 'administer Upgradation'
+
+upgradation.run_form:
+  path: /case-study-upgradation/case-study-run/{proposal_id}
+  defaults:
+    _title: 'Download Codes'
+    _form: '\Drupal\upgradation\Form\UpgradationRunForm'
+    proposal_id: 0
+  requirements:
+    _permission: 'Upgradation download code'
+    proposal_id: '\d+'
