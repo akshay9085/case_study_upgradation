@@ -81,6 +81,14 @@ upgradation.proposal_status_form:
     _permission: 'Case Study approve proposal'
     proposal_id: '\d+'
 
+upgradation.proposal_status_form_legacy:
+  path: /case-study-upgradation/manage-proposal/status
+  defaults:
+    _title: 'Proposal Status'
+    _form: '\Drupal\upgradation\Form\UpgradationProposalStatusForm'
+  requirements:
+    _permission: 'Case Study approve proposal'
+
 upgradation.edit_upload_abstract_code_form:
   path: /case-study-upgradation/abstract-code/edit-upload-files/{proposal_id}
   defaults:

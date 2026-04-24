@@ -21,6 +21,7 @@ class UpgradationProposalStatusForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $proposal_id = NULL) {
+    $proposal_id = $this->resolveProposalId($proposal_id);
     $proposal = upgradation_load_proposal($proposal_id);
     if (!$proposal) {
       $this->messenger()->addError($this->t('Invalid proposal selected. Please try again.'));
@@ -235,6 +236,18 @@ class UpgradationProposalStatusForm extends FormBase {
       default:
         return (string) $this->t('Unknown');
     }
+  }
+
+  /**
+   * Resolves a proposal id from the route or legacy query string.
+   */
+  private function resolveProposalId($proposal_id) {
+    if ($proposal_id !== NULL && $proposal_id !== '') {
+      return (int) $proposal_id;
+    }
+
+    $query_proposal_id = \Drupal::request()->query->get('proposal_id');
+    return is_numeric($query_proposal_id) ? (int) $query_proposal_id : NULL;
   }
 
   /**
