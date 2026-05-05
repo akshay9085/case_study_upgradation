@@ -59,25 +59,6 @@ class UpgradationUploadAbstractCodeForm extends FormBase {
       '#markup' => Html::escape($proposal->contributor_name),
     ];
 
-    $form['solver_used'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Select the solver to be used'),
-      '#options' => _csu_list_of_solvers($proposal->version_id),
-      '#default_value' => $proposal->solver_used,
-      '#required' => TRUE,
-    ];
-
-    $form['solver_used_text'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Enter the solver to be used'),
-      '#description' => $this->t('Maximum character limit is 100.'),
-      '#states' => [
-        'visible' => [
-          ':input[name="solver_used"]' => ['value' => 'Other'],
-        ],
-      ],
-    ];
-
     $form['upload_an_abstract'] = [
       '#type' => 'file',
       '#title' => $this->t('Upload an abstract of the project'),
@@ -136,8 +117,6 @@ class UpgradationUploadAbstractCodeForm extends FormBase {
       }
       $this->validateUploadedFile($form_state, $field_name, $file_type);
     }
-
-    $this->validateSolverField($form_state);
   }
 
   /**
@@ -181,7 +160,6 @@ class UpgradationUploadAbstractCodeForm extends FormBase {
     \Drupal::database()->update('csu_proposal')
       ->fields([
         'is_submitted' => 1,
-        'solver_used' => $form_state->getValue('solver_used') === 'Other' ? $form_state->getValue('solver_used_text') : $form_state->getValue('solver_used'),
       ])
       ->condition('id', $proposal->id)
       ->execute();
@@ -296,33 +274,6 @@ class UpgradationUploadAbstractCodeForm extends FormBase {
 
     if (!upgradation_check_valid_filename($file_name)) {
       $form_state->setErrorByName($field_name, $this->t('Invalid file name specified. Only letters, numbers, dots, dashes, and underscores are allowed.'));
-    }
-  }
-
-  /**
-   * Validates solver-related fields.
-   */
-  private function validateSolverField(FormStateInterface $form_state) {
-    if (!$form_state->getValue('solver_used')) {
-      $form_state->setErrorByName('solver_used', $this->t('Please select a solver.'));
-      return;
-    }
-
-    if ($form_state->getValue('solver_used') !== 'Other') {
-      return;
-    }
-
-    $solver_text = trim((string) $form_state->getValue('solver_used_text'));
-    if ($solver_text === '') {
-      $form_state->setErrorByName('solver_used_text', $this->t('Solver used cannot be empty.'));
-      return;
-    }
-    if (strlen($solver_text) > 100) {
-      $form_state->setErrorByName('solver_used_text', $this->t('Maximum character limit is 100.'));
-      return;
-    }
-    if (strlen($solver_text) < 7) {
-      $form_state->setErrorByName('solver_used_text', $this->t('Minimum character limit is 7.'));
     }
   }
 

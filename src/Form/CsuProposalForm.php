@@ -240,13 +240,51 @@ class CsuProposalForm extends FormBase {
         '#value' => $details['solver_used'],
       ];
 
+      $selected_version = $form_state->getValue('version');
+      $solver_options = $selected_version ? _csu_list_of_solvers($selected_version) : [];
+      $solver_options['Other'] = $this->t('Other');
+
       $form['case_study_selection']['version'] = [
         '#type' => 'select',
         '#title' => $this->t('Select the version to be used'),
         '#options' => _csu_list_of_versions(),
         '#empty_option' => $this->t('- Select version -'),
         '#required' => TRUE,
-        '#default_value' => $form_state->getValue('version'),
+        '#default_value' => $selected_version,
+        '#ajax' => [
+          'callback' => '::updateCaseStudySelection',
+          'wrapper' => 'case-study-selection-wrapper',
+        ],
+      ];
+
+      $form['case_study_selection']['updated_simulation_type'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Updated simulation type'),
+        '#options' => _csu_list_of_simulation_types(),
+        '#empty_option' => $this->t('- Select simulation type -'),
+        '#default_value' => $form_state->getValue('updated_simulation_type') ?: $details['simulation_type'],
+        '#required' => TRUE,
+      ];
+
+      $form['case_study_selection']['updated_solver_used'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Updated solver to be used'),
+        '#options' => $solver_options,
+        '#empty_option' => $this->t('- Select solver -'),
+        '#default_value' => $form_state->getValue('updated_solver_used'),
+        '#required' => TRUE,
+      ];
+
+      $form['case_study_selection']['updated_solver_used_text'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Enter the updated solver to be used'),
+        '#maxlength' => 100,
+        '#description' => $this->t('Maximum character limit is 100.'),
+        '#states' => [
+          'visible' => [
+            ':input[name="updated_solver_used"]' => ['value' => 'Other'],
+          ],
+        ],
       ];
     }
 
@@ -376,6 +414,12 @@ class CsuProposalForm extends FormBase {
     if (!$form_state->getValue('version')) {
       $form_state->setErrorByName('version', $this->t('Select the version to be used.'));
     }
+
+    if (!$form_state->getValue('updated_simulation_type')) {
+      $form_state->setErrorByName('updated_simulation_type', $this->t('Select the updated simulation type.'));
+    }
+
+    $this->validateUpdatedSolverField($form_state);
   }
 
   /**
@@ -387,6 +431,7 @@ class CsuProposalForm extends FormBase {
     $project_title = $values['cfd_case_study_name_dropdown'];
     $proposer_name = $values['name_title'] . ' ' . $values['contributor_name'];
     $directory_name = _csu_dir_name($project_title, $proposer_name);
+    $solver = $values['updated_solver_used'] === 'Other' ? trim((string) $values['updated_solver_used_text']) : $values['updated_solver_used'];
 
     $proposal_id = \Drupal::database()->insert('csu_proposal')
       ->fields([
@@ -406,8 +451,8 @@ class CsuProposalForm extends FormBase {
         'country' => $values['country'],
         'project_title' => $project_title,
         'version_id' => $values['version'],
-        'simulation_type_id' => $values['simulation_type'],
-        'solver_used' => $values['solver_used'],
+        'simulation_type_id' => $values['updated_simulation_type'],
+        'solver_used' => $solver,
         'directory_name' => $directory_name,
         'approval_status' => 1,
         'is_completed' => 0,
@@ -443,6 +488,33 @@ class CsuProposalForm extends FormBase {
 
     $this->messenger()->addStatus($this->t('We have received your case study proposal. Please submit your files.'));
     $form_state->setRedirect('upgradation.abstract');
+  }
+
+  /**
+   * Validates updated solver-related fields.
+   */
+  private function validateUpdatedSolverField(FormStateInterface $form_state) {
+    if (!$form_state->getValue('updated_solver_used')) {
+      $form_state->setErrorByName('updated_solver_used', $this->t('Please select an updated solver.'));
+      return;
+    }
+
+    if ($form_state->getValue('updated_solver_used') !== 'Other') {
+      return;
+    }
+
+    $solver_text = trim((string) $form_state->getValue('updated_solver_used_text'));
+    if ($solver_text === '') {
+      $form_state->setErrorByName('updated_solver_used_text', $this->t('Solver used cannot be empty.'));
+      return;
+    }
+    if (strlen($solver_text) > 100) {
+      $form_state->setErrorByName('updated_solver_used_text', $this->t('Maximum character limit is 100.'));
+      return;
+    }
+    if (strlen($solver_text) < 7) {
+      $form_state->setErrorByName('updated_solver_used_text', $this->t('Minimum character limit is 7.'));
+    }
   }
 
   /**

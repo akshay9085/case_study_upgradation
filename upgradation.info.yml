@@ -1,6 +1,6 @@
 name: 'CFD Case Study UP'
 description: 'CFD Case Study UP Project, FOSSEE, IIT Bombay'
 package: FOSSEE
-core_version_requirement: ^10
+core_version_requirement: ^9 || ^10
 type: module
 configure: upgradation.settings_form
