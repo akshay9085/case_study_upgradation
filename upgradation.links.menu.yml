@@ -2,7 +2,8 @@ upgradation.settings_form:
   title: 'Upgradation Settings'
   description: 'Configure case study upgradation settings'
   route_name: upgradation.settings_form
-  parent: system.admin_config
+  parent: system.admin
+  weight: 10
 
 upgradation.csu_proposal_form:
   title: 'Upgradation Proposal Form'

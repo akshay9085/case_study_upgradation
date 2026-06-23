@@ -34,6 +34,210 @@ function upgradation_send_mail($module, $key, $email_to, $langcode, array $param
 }
 
 /**
+ * Implements hook_mail().
+ */
+function upgradation_mail($key, &$message, $params) {
+  $payload = (isset($params[$key]) && is_array($params[$key])) ? $params[$key] : [];
+
+  if (!empty($payload['headers']) && is_array($payload['headers'])) {
+    $message['headers'] = array_merge($message['headers'] ?? [], $payload['headers']);
+  }
+
+  if ($key === 'standard') {
+    $message['subject'] = (string) ($payload['subject'] ?? '');
+    $body = $payload['body'] ?? '';
+    $message['body'] = is_array($body) ? $body : [(string) $body];
+    return;
+  }
+
+  $langcode = $message['langcode'] ?? \Drupal::languageManager()->getDefaultLanguage()->getId();
+  $site_name = upgradation_site_name();
+
+  $proposal_id = $payload['proposal_id'] ?? $payload['result1'] ?? NULL;
+  $proposal = upgradation_load_proposal($proposal_id);
+
+  $account = NULL;
+  if (!empty($payload['user_id'])) {
+    $account = \Drupal::entityTypeManager()->getStorage('user')->load((int) $payload['user_id']);
+  }
+
+  $proposal_user_name = upgradation_proposal_full_name($proposal);
+  $user_name = $proposal_user_name !== ''
+    ? $proposal_user_name
+    : ($account ? $account->getDisplayName() : t('Contributor', [], ['langcode' => $langcode]));
+  $user_email = $account ? $account->getEmail() : '';
+  $proposal_lines = upgradation_build_common_proposal_lines($proposal, $user_email, $langcode);
+
+  switch ($key) {
+    case 'case_study_proposal_received':
+      $message['subject'] = t('[@site_name][Case Study Upgradation Project] Your proposal has been received', ['@site_name' => $site_name], ['langcode' => $langcode]);
+      $message['body'] = [
+        t('Dear @user_name,', ['@user_name' => $user_name], ['langcode' => $langcode]),
+        '',
+        t('We have received your case study upgradation proposal with the following details:', [], ['langcode' => $langcode]),
+      ];
+      $message['body'] = array_merge($message['body'], $proposal_lines, [
+        '',
+        t('Please upload your abstract and project files to complete the submission.', [], ['langcode' => $langcode]),
+        '',
+        t('Best wishes,', [], ['langcode' => $langcode]),
+        '',
+        t('@site_name Team', ['@site_name' => $site_name], ['langcode' => $langcode]),
+        'FOSSEE, IIT Bombay',
+      ]);
+      break;
+
+    case 'abstract_uploaded':
+      $message['subject'] = t('[@site_name][Case Study Upgradation Project] Project files uploaded', ['@site_name' => $site_name], ['langcode' => $langcode]);
+      $message['body'] = [
+        t('Dear @user_name,', ['@user_name' => $user_name], ['langcode' => $langcode]),
+        '',
+        t('You have uploaded files for the following case study upgradation project:', [], ['langcode' => $langcode]),
+      ];
+      $message['body'] = array_merge($message['body'], $proposal_lines, [
+        '',
+        t('The files are under review. You will be notified after review.', [], ['langcode' => $langcode]),
+        '',
+        t('Best wishes,', [], ['langcode' => $langcode]),
+        '',
+        t('@site_name Team', ['@site_name' => $site_name], ['langcode' => $langcode]),
+        'FOSSEE, IIT Bombay',
+      ]);
+      break;
+
+    case 'abstract_edit_file_uploaded':
+      $updated_files = [];
+      foreach ((array) ($payload['updated_files'] ?? []) as $file_name) {
+        $updated_files[] = upgradation_mail_value($file_name);
+      }
+      $updated_files_text = $updated_files ? implode(', ', $updated_files) : 'N/A';
+
+      $message['subject'] = t('[@site_name][Case Study Upgradation Project] Project files updated', ['@site_name' => $site_name], ['langcode' => $langcode]);
+      $message['body'] = [
+        t('Dear @user_name,', ['@user_name' => $user_name], ['langcode' => $langcode]),
+        '',
+        t('You have updated files for the following case study upgradation project:', [], ['langcode' => $langcode]),
+      ];
+      $message['body'] = array_merge($message['body'], $proposal_lines, [
+        t('Updated Files: @value', ['@value' => $updated_files_text], ['langcode' => $langcode]),
+        '',
+        t('Best wishes,', [], ['langcode' => $langcode]),
+        '',
+        t('@site_name Team', ['@site_name' => $site_name], ['langcode' => $langcode]),
+        'FOSSEE, IIT Bombay',
+      ]);
+      break;
+
+    case 'case_study_proposal_completed':
+      $message['subject'] = t('[@site_name][Case Study Upgradation Project] Your proposal has been marked as completed', ['@site_name' => $site_name], ['langcode' => $langcode]);
+      $message['body'] = [
+        t('Dear @user_name,', ['@user_name' => $user_name], ['langcode' => $langcode]),
+        '',
+        t('Your case study upgradation submission has been marked as completed successfully.', [], ['langcode' => $langcode]),
+        '',
+      ];
+      $message['body'] = array_merge($message['body'], $proposal_lines, [
+        '',
+        t('Best wishes,', [], ['langcode' => $langcode]),
+        '',
+        t('@site_name Team', ['@site_name' => $site_name], ['langcode' => $langcode]),
+        'FOSSEE, IIT Bombay',
+      ]);
+      break;
+
+    case 'case_study_proposal_deleted':
+      $message['subject'] = t('[@site_name][Case Study Upgradation Project] Your proposal has been deleted', ['@site_name' => $site_name], ['langcode' => $langcode]);
+      $message['body'] = [
+        t('Dear @user_name,', ['@user_name' => $user_name], ['langcode' => $langcode]),
+        '',
+        t('Your case study upgradation proposal has been deleted with the following details:', [], ['langcode' => $langcode]),
+        '',
+      ];
+      $message['body'] = array_merge($message['body'], $proposal_lines, [
+        '',
+        t('You can submit a new case study upgradation proposal anytime.', [], ['langcode' => $langcode]),
+        '',
+        t('Best wishes,', [], ['langcode' => $langcode]),
+        '',
+        t('@site_name Team', ['@site_name' => $site_name], ['langcode' => $langcode]),
+        'FOSSEE, IIT Bombay',
+      ]);
+      break;
+
+    default:
+      if (isset($payload['subject'])) {
+        $message['subject'] = (string) $payload['subject'];
+      }
+      if (isset($payload['body'])) {
+        $message['body'] = is_array($payload['body']) ? $payload['body'] : [(string) $payload['body']];
+      }
+      break;
+  }
+}
+
+/**
+ * Builds common proposal detail lines for email templates.
+ */
+function upgradation_build_common_proposal_lines($proposal, $user_email, $langcode) {
+  if (!$proposal) {
+    return [
+      t('Proposal details are unavailable.', [], ['langcode' => $langcode]),
+    ];
+  }
+
+  $full_name = upgradation_proposal_full_name($proposal);
+  $version = !empty($proposal->version_id) ? upgradation_get_version_name($proposal->version_id) : '';
+  $creation_date = upgradation_format_mail_date($proposal->creation_date ?? NULL);
+  $expected_completion = upgradation_format_mail_date($proposal->expected_date_of_completion ?? NULL);
+
+  return [
+    t('Full Name: @value', ['@value' => upgradation_mail_value($full_name)], ['langcode' => $langcode]),
+    t('Email: @value', ['@value' => upgradation_mail_value($user_email)], ['langcode' => $langcode]),
+    t('University: @value', ['@value' => upgradation_mail_value($proposal->university ?? '')], ['langcode' => $langcode]),
+    t('Institute: @value', ['@value' => upgradation_mail_value($proposal->institute ?? '')], ['langcode' => $langcode]),
+    t('City: @value', ['@value' => upgradation_mail_value($proposal->city ?? '')], ['langcode' => $langcode]),
+    t('State: @value', ['@value' => upgradation_mail_value($proposal->state ?? '')], ['langcode' => $langcode]),
+    t('Country: @value', ['@value' => upgradation_mail_value($proposal->country ?? '')], ['langcode' => $langcode]),
+    t('Project Title: @value', ['@value' => upgradation_mail_value($proposal->project_title ?? '')], ['langcode' => $langcode]),
+    t('Upgraded Version: @value', ['@value' => upgradation_mail_value($version ?: ($proposal->version_id ?? ''))], ['langcode' => $langcode]),
+    t('Simulation Type: @value', ['@value' => upgradation_mail_value($proposal->simulation_type_id ?? '')], ['langcode' => $langcode]),
+    t('Solver Used: @value', ['@value' => upgradation_mail_value($proposal->solver_used ?? '')], ['langcode' => $langcode]),
+    t('Date of Proposal: @value', ['@value' => $creation_date], ['langcode' => $langcode]),
+    t('Expected Date of Completion: @value', ['@value' => $expected_completion], ['langcode' => $langcode]),
+  ];
+}
+
+/**
+ * Returns the full contributor name stored on a proposal.
+ */
+function upgradation_proposal_full_name($proposal) {
+  if (!$proposal) {
+    return '';
+  }
+
+  return trim(($proposal->name_title ?? '') . ' ' . ($proposal->contributor_name ?? ''));
+}
+
+/**
+ * Formats proposal date values for email templates.
+ */
+function upgradation_format_mail_date($value) {
+  if (empty($value) || !is_numeric($value)) {
+    return 'N/A';
+  }
+
+  return \Drupal::service('date.formatter')->format((int) $value, 'custom', 'd/m/Y');
+}
+
+/**
+ * Normalizes mail placeholder values.
+ */
+function upgradation_mail_value($value) {
+  $value = is_string($value) ? trim($value) : $value;
+  return ($value === '' || $value === NULL || $value === 'NULL') ? 'N/A' : (string) $value;
+}
+
+/**
  * Returns the site name.
  */
 function upgradation_site_name() {
@@ -446,7 +650,9 @@ function _bulk_list_of_upgradation() {
     ->condition('approval_status', 1)
     ->orderBy('project_title', 'ASC')
     ->execute();
-
+// if (empty($result)){
+//   set
+// }
   while ($row = $result->fetchObject()) {
     $project_titles[$row->id] = $row->project_title . ' (Proposed by ' . $row->contributor_name . ')';
   }

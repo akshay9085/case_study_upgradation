@@ -1,0 +1,17 @@
+upgradation.proposal_all:
+  route_name: upgradation.proposal_all
+  title: 'Manage Proposals'
+  base_route: upgradation.proposal_all
+  weight: 0
+
+upgradation.proposal_all_legacy:
+  route_name: upgradation.proposal_all_legacy
+  title: 'All Proposals'
+  base_route: upgradation.proposal_all
+  weight: 1
+
+upgradation.proposal_edit_file_all:
+  route_name: upgradation.proposal_edit_file_all
+  title: 'Edit code files'
+  base_route: upgradation.proposal_all
+  weight: 2

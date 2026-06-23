@@ -404,7 +404,7 @@ class UpgradationProposalEditForm extends FormBase {
       'Cc' => $mail['cc'],
       'Bcc' => $mail['bcc'],
     ];
-    if ($account && !upgradation_send_mail('case_study', 'case_study_proposal_deleted', $account->getEmail(), $langcode, $params, $mail['from'])) {
+    if ($account && !upgradation_send_mail('upgradation', 'case_study_proposal_deleted', $account->getEmail(), $langcode, $params, $mail['from'])) {
       $this->messenger()->addError($this->t('Error sending email message.'));
     }
 

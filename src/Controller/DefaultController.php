@@ -26,15 +26,20 @@ class DefaultController extends ControllerBase {
     ];
 
     $rows = [];
-    $result = \Drupal::database()
+    $proposals = \Drupal::database()
       ->select('csu_proposal', 'cp')
       ->fields('cp')
       ->condition('approval_status', 3)
       ->orderBy('actual_completion_date', 'DESC')
-      ->execute();
-
-    $index = 1;
-    while ($proposal = $result->fetchObject()) {
+      ->execute()
+      ->fetchAll();
+// echo '<pre>';
+// var_dump($proposals);
+// echo '</pre>';
+// exit;
+    $index = count($proposals);
+   
+    foreach ($proposals as $proposal) {
       $project_link = Link::fromTextAndUrl($proposal->project_title, Url::fromRoute('upgradation.run_form', ['proposal_id' => $proposal->id]))->toString();
       $project_markup = $project_link . '<br><strong>(' . $this->t('Solver used: @solver', ['@solver' => $proposal->solver_used]) . ')</strong>';
 
@@ -45,7 +50,8 @@ class DefaultController extends ControllerBase {
         Html::escape($proposal->university),
         date('Y', (int) $proposal->actual_completion_date),
       ];
-      $index++;
+      $index--;
+
     }
 
     return [
@@ -74,15 +80,16 @@ class DefaultController extends ControllerBase {
     ];
 
     $rows = [];
-    $result = \Drupal::database()
+    $proposals = \Drupal::database()
       ->select('csu_proposal', 'cp')
       ->fields('cp')
       ->condition('approval_status', 1)
       ->condition('is_completed', 0)
-      ->execute();
+      ->execute()
+      ->fetchAll();
 
-    $index = 1;
-    while ($proposal = $result->fetchObject()) {
+    $index = count($proposals);
+    foreach ($proposals as $proposal) {
       $rows[] = [
         $index,
         Html::escape($proposal->project_title),
@@ -90,7 +97,7 @@ class DefaultController extends ControllerBase {
         Html::escape($proposal->university),
         $proposal->approval_date ? date('Y', (int) $proposal->approval_date) : $this->t('NA'),
       ];
-      $index++;
+      $index--;
     }
 
     return [

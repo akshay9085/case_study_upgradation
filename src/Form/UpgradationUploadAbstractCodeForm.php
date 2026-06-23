@@ -234,7 +234,7 @@ class UpgradationUploadAbstractCodeForm extends FormBase {
       'Cc' => $mail['cc'],
       'Bcc' => $mail['bcc'],
     ];
-    if (!upgradation_send_mail('cfd_hackathon_submissions', 'abstract_uploaded', $this->currentUser()->getEmail(), $langcode, $params, $mail['from'])) {
+    if (!upgradation_send_mail('upgradation', 'abstract_uploaded', $this->currentUser()->getEmail(), $langcode, $params, $mail['from'])) {
       $this->messenger()->addError($this->t('Error sending email message.'));
     }
 

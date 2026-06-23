@@ -88,7 +88,17 @@ class UpgradationAbstractBulkApprovalForm extends FormBase {
   public function updateCaseStudyDetails(array &$form, FormStateInterface $form_state) {
     return $form['wrapper'];
   }
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $action = (int) $form_state->getValue('case_study_actions');
+    $message = trim((string) $form_state->getValue('message'));
 
+    if ($action === 3 && strlen($message) < 30) {
+      $form_state->setErrorByName('message', $this->t('Please mention the reason for disapproval. A minimum of 30 characters is required.'));
+    }
+  }
   /**
    * {@inheritdoc}
    */
@@ -185,7 +195,7 @@ class UpgradationAbstractBulkApprovalForm extends FormBase {
           'Bcc' => $mail['bcc'],
         ];
 
-        if ($account && !upgradation_send_mail('scilab_case_study', 'standard', $account->getEmail(), $langcode, $params, $mail['from'])) {
+        if ($account && !upgradation_send_mail('upgradation', 'standard', $account->getEmail(), $langcode, $params, $mail['from'])) {
           $this->messenger()->addError($this->t('Error sending email message.'));
         }
 
@@ -193,10 +203,10 @@ class UpgradationAbstractBulkApprovalForm extends FormBase {
         return;
 
       case 3:
-        if (strlen($message) < 30) {
-          $form_state->setErrorByName('message', $this->t('Please mention the reason for disapproval. A minimum of 30 characters is required.'));
-          return;
-        }
+        // if (strlen($message) < 30) {
+        //   $form_state->setErrorByName('message', $this->t('Please mention the reason for disapproval. A minimum of 30 characters is required.'));
+        //   return;
+        // }
         if (!$this->currentUser()->hasPermission('Upgradation bulk delete abstract')) {
           $this->messenger()->addError($this->t('You do not have permission to disapprove and delete an entire project.'));
           return;
@@ -225,7 +235,7 @@ class UpgradationAbstractBulkApprovalForm extends FormBase {
           'Bcc' => $mail['bcc'],
         ];
 
-        if ($account && !upgradation_send_mail('scilab_case_study', 'standard', $account->getEmail(), $langcode, $params, $mail['from'])) {
+        if ($account && !upgradation_send_mail('upgradation', 'standard', $account->getEmail(), $langcode, $params, $mail['from'])) {
           $this->messenger()->addError($this->t('Error sending email message.'));
         }
 

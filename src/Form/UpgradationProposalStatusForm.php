@@ -205,7 +205,7 @@ class UpgradationProposalStatusForm extends FormBase {
       'Cc' => $mail['cc'],
       'Bcc' => trim($this->currentUser()->getEmail() . ', ' . $mail['bcc'], ', '),
     ];
-    if ($email_to && !upgradation_send_mail('case_study', 'case_study_proposal_completed', $email_to, $langcode, $params, $mail['from'])) {
+    if ($email_to && !upgradation_send_mail('upgradation', 'case_study_proposal_completed', $email_to, $langcode, $params, $mail['from'])) {
       $this->messenger()->addError($this->t('Error sending email message.'));
     }
 

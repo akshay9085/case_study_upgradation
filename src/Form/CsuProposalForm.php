@@ -34,7 +34,7 @@ class CsuProposalForm extends FormBase {
     $selected_case_study = (string) $form_state->getValue('cfd_case_study_name_dropdown', '');
     $details = $this->getCaseStudyDisplayDetails($selected_case_study);
     
-
+/*****************Personal Information******************** */
     $form['name_title'] = [
       '#type' => 'select',
       '#title' => $this->t('Title'),
@@ -181,7 +181,7 @@ class CsuProposalForm extends FormBase {
       '#title' => $this->t('Pincode'),
       '#maxlength' => 6,
     ];
-
+/*****************Personal Information End******************** */
     $form['hr'] = [
       '#type' => 'item',
       '#markup' => '<hr>',
@@ -257,14 +257,7 @@ class CsuProposalForm extends FormBase {
         ],
       ];
 
-      $form['case_study_selection']['updated_simulation_type'] = [
-        '#type' => 'select',
-        '#title' => $this->t('Updated simulation type'),
-        '#options' => _csu_list_of_simulation_types(),
-        '#empty_option' => $this->t('- Select simulation type -'),
-        '#default_value' => $form_state->getValue('updated_simulation_type') ?: $details['simulation_type'],
-        '#required' => TRUE,
-      ];
+      
 
       $form['case_study_selection']['updated_solver_used'] = [
         '#type' => 'select',
@@ -285,6 +278,14 @@ class CsuProposalForm extends FormBase {
             ':input[name="updated_solver_used"]' => ['value' => 'Other'],
           ],
         ],
+      ];
+      $form['case_study_selection']['updated_simulation_type'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Updated simulation type'),
+        '#options' => _csu_list_of_simulation_types(),
+        '#empty_option' => $this->t('- Select simulation type -'),
+        // '#default_value' => $form_state->getValue('updated_simulation_type') ?: $details['simulation_type'],
+        '#required' => TRUE,
       ];
     }
 
@@ -357,7 +358,7 @@ class CsuProposalForm extends FormBase {
       ->fetchField();
 
     return [
-      'earlier_version_used' => $earlier_version,
+      'earlier_version_used' => $earlier_version?: 'NA',
       'simulation_type' => $simulation_type ?: $case_study->simulation_type_id,
       'solver_used' => $case_study->solver_used ?: '',
     ];
@@ -482,7 +483,7 @@ class CsuProposalForm extends FormBase {
       'Bcc' => $mail['bcc'],
     ];
 
-    if (!upgradation_send_mail('case_study', 'case_study_proposal_received', $user->getEmail(), $langcode, $params, $mail['from'])) {
+    if (!upgradation_send_mail('upgradation', 'case_study_proposal_received', $user->getEmail(), $langcode, $params, $mail['from'])) {
       $this->messenger()->addError($this->t('Error sending email message.'));
     }
 

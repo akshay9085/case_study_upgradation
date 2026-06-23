@@ -5,6 +5,8 @@ upgradation.csu_proposal_form:
     _form: '\Drupal\upgradation\Form\CsuProposalForm'
   requirements:
     _permission: 'Up create proposal'
+  options:
+    no_cache: TRUE
 
 upgradation.abstract_bulk_approval_form:
   path: /case-study-upgradation/abstract-approval/bulk
@@ -13,6 +15,8 @@ upgradation.abstract_bulk_approval_form:
     _form: '\Drupal\upgradation\Form\UpgradationAbstractBulkApprovalForm'
   requirements:
     _permission: 'Upgradation download code'
+  options:
+    no_cache: TRUE
 
 upgradation.completed_proposals_all:
   path: /case-study-upgradation/completed-case-studies
@@ -21,6 +25,8 @@ upgradation.completed_proposals_all:
     _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_completed_proposals_all'
   requirements:
     _permission: 'Upgradation download code'
+  options:
+    no_cache: TRUE
 
 upgradation.progress_all:
   path: /case-study-upgradation/case-study-progress
@@ -29,6 +35,8 @@ upgradation.progress_all:
     _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_progress_all'
   requirements:
     _permission: 'Upgradation download code'
+  options:
+    no_cache: TRUE
 
 upgradation.download_full_project:
   path: /case-study-upgradation/full-download/project/{proposal_id}
@@ -46,6 +54,8 @@ upgradation.proposal_all:
     _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_proposal_all'
   requirements:
     _permission: 'upgradation manage proposal'
+  options:
+    no_cache: TRUE
 
 upgradation.proposal_all_legacy:
   path: /case-study-upgradation/manage-proposal/all
@@ -54,7 +64,9 @@ upgradation.proposal_all_legacy:
     _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_proposal_all'
   requirements:
     _permission: 'upgradation manage proposal'
-
+  options:
+    no_cache: TRUE
+    
 upgradation.proposal_edit_file_all:
   path: /case-study-upgradation/manage-proposal/edit-upload-file
   defaults:
@@ -97,7 +109,8 @@ upgradation.edit_upload_abstract_code_form:
   requirements:
     _permission: 'upgradation manage proposal'
     proposal_id: '\d+'
-
+  options:
+    no_cache: TRUE
 upgradation.abstract:
   path: /case-study-upgradation/abstract-code
   defaults:
@@ -105,6 +118,8 @@ upgradation.abstract:
     _controller: '\Drupal\upgradation\Controller\DefaultController::upgradation_abstract'
   requirements:
     _permission: 'Case Study Upgradation upload abstract'
+  options:
+    no_cache: TRUE
 
 upgradation.upload_abstract_code_form:
   path: /case-study-upgradation/abstract-code/upload
@@ -121,6 +136,8 @@ upgradation.settings_form:
     _form: '\Drupal\upgradation\Form\UpgradationSettingsForm'
   requirements:
     _permission: 'administer Upgradation'
+  options:
+    _admin_route: TRUE
 
 upgradation.run_form:
   path: /case-study-upgradation/case-study-run/{proposal_id}
